@@ -369,8 +369,8 @@ class Executor:
 
             menus = [self.assets_path+'clear_shop/menu_1.png', self.assets_path+'clear_shop/menu_2.png']
             for img in menus:
-                if self.is_on_screen(img, 0.5):
-                    self.tap(img, 0.5)
+                if self.is_on_screen(img, 0.7):
+                    self.tap(img, 0.7)
                     # package = False
                     # package_count = 0
                     while True:
@@ -379,8 +379,8 @@ class Executor:
                         if self.update_cache() == 'crash':
                             return 'crash'
 
-                        elif self.is_on_screen(self.assets_path+'clear_shop/shop.png', 0.5):
-                            self.tap(self.assets_path+'clear_shop/shop.png', 0.5)
+                        elif self.is_on_screen(self.assets_path+'clear_shop/shop.png', 0.7):
+                            self.tap(self.assets_path+'clear_shop/shop.png', 0.7)
 
                         elif self.is_on_screen(self.assets_path+'clear_shop/error.png'):
                             self.tap(self.assets_path+'clear_shop/error_confirm.png', 0.7)
