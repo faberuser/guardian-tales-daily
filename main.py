@@ -2,12 +2,32 @@ import sys, logging, traceback
 
 from datetime import datetime
 from time import sleep
-from shutil import copy
+from shutil import copy, rmtree
 from json import load, dump
 from os import path as pth, mkdir, chdir, getcwd, listdir, remove
-from subprocess import call
+from subprocess import call, run as terminal
 
 chdir(getcwd())
+while True:
+    try:
+        for item in listdir('./.cache/tmp'):
+            if item not in sys._MEIPASS:
+                rmtree('./.cache/tmp/'+item)
+        break
+    except PermissionError:
+        for item in listdir('./.cache/tmp'):
+            if "_MEI" in item and item not in sys._MEIPASS:
+                _adb_dir = '"'+getcwd()+'\\.cache\\tmp\\'+item+'\\adb.exe" '
+                _nox_adb_dir = '"'+getcwd()+'\\.cache\\tmp\\'+item+'\\nox_adb.exe" '
+                break
+        try:
+            terminal(_adb_dir + 'kill-server')
+            terminal(_nox_adb_dir + 'kill-server')
+        except FileNotFoundError:
+            pass
+        continue
+    except AttributeError:
+        break
 if pth.exists('./.cache') == False:
     mkdir('./.cache')
 if pth.exists('./.cache/log.log') == False:
