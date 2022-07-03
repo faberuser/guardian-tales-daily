@@ -30,7 +30,7 @@
 1. Download and install `QooApp` or `TapTap` APK
 - `QooApp`: https://apps.qoo-app.com/en/dl/880
 - `TapTap`: https://d.tap.io/latest/seo-google
-After that login to your account or guest then download and install `Guardian Tales`
+##### After that login to your account or guest then download and install `Guardian Tales`
 *I don't recommend using Emulator Store because of its slowly game version update*
 
 2. Game testing
