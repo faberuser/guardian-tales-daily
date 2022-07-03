@@ -74,7 +74,7 @@ class MainWindow(QWidget):
             pass
         elif config['startup'] == 'once':
             self.run_once.setDisabled(True)
-            self.run_once.setText('Run this script once (Running)')
+            self.run_once.setText('Run this script once (Executing)')
             self.run_background.setDisabled(True)
             self.start_config.setDisabled(True)
 
@@ -195,7 +195,7 @@ class MainWindow(QWidget):
             return
 
         self.run_once.setDisabled(True)
-        self.run_once.setText('Run this script once (Running)')
+        self.run_once.setText('Run this script once (Executing)')
         self.run_background.setDisabled(True)
         self.start_config.setDisabled(True)
 
@@ -217,8 +217,16 @@ class MainWindow(QWidget):
             return
 
         if isinstance(self.worker, OnRunBackground):
-            if self.worker.alive:
+            if self.worker.alive == True and self.worker.executing == False:
                 self.worker.stop()
+                self.run_background.setDisabled(True)
+                self.run_background.setText('Run this script in background (Stopping)')
+                QMessageBox.information(self, f"Notice", "Script will be stopped at maximum <b>1 minute</b>.")
+                return
+            elif self.worker.alive == True and self.worker.executing == True:
+                self.run_background.setDisabled(True)
+                self.run_background.setText('Run this script in background (Executing)')
+                QMessageBox.information(self, f"Notice", "Script is currently executing, please wait until finished.")
                 return
 
         self.run_once.setDisabled(True)
@@ -236,12 +244,6 @@ class MainWindow(QWidget):
         self.start_config.setDisabled(False)
 
     def on_make_background_click(self):
-        with open('./config.json') as f:
-            config = load(f)
-        if config['emulator'] == '' or config['devices'] == []:
-            self.did_not_configured()
-            return
-
         call([r'generate-shortcut.bat'])
         startup = pth.expanduser('~\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup')
         had = False
@@ -714,6 +716,7 @@ class OnRunBackground(QThread):
     def __init__(self):
         QThread.__init__(self)
         self.alive = True
+        self.executing = False
 
     def run(self):
         import executor
@@ -721,10 +724,12 @@ class OnRunBackground(QThread):
             now = datetime.now().strftime("%H:%M")
             print('Checking at '+str(now))
             if str(now) != config['time']:
-                sleep(1)
+                sleep(60)
                 continue
+            self.executing = True
             executor.run()
             log('Executed successfully at '+str(now))
+            self.executing = False
 
     def stop(self):
         self.alive = False

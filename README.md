@@ -14,8 +14,6 @@
   * `pip install -r requirements.txt`
 2. Run:
   * `python main.py`
-  * To config press 4 or change value in `config.json` file to let the script do or don't do stuffs
-  * To to dailies press 1
 
 ## Usage
 #### Can only work with these settings:
@@ -26,6 +24,7 @@
 #### Emulator setup:
 - `3 cores CPU` and `4GB RAM` or above is recommended
 - Open emulator's `Settings` and head to `Other settings` (or `Basic` on lower LDPlayer version) on the left menu, change `@adb_debug`/`ADB debugging` to `Open local connection`
+- If you are using then you don't need to config `ADB debugging`
 
 #### Game setup:
 1. Download and install `QooApp` or `TapTap` APK
@@ -44,6 +43,5 @@ After that login to your account or guest then download and install `Guardian Ta
     4. Hold `Play Store` App and drag it to `Info` in the left side of emulator then click the `Disable` button
 
 3. Turn on your `VPN` if needed then launch `Guardian Tales`, if you can login smoothly then its ok, if it crash or freeze then i don't know what to do next, try asking for help on Emulator Discord support or something
-
 
 ##### Pakages built with pyinstaller and Python 3.9.13
