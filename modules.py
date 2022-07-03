@@ -273,10 +273,6 @@ class Executor:
                 'mission_3': False,
                 'mission_4': False
             },
-            'other': {
-                'ld_crash': False,
-                'nox_crash': False
-            },
             'sweep_dungeon': {
                 '+': False,
                 '3_stars': False,
@@ -320,11 +316,10 @@ class Executor:
             self.freeze_count = 0
             return 'crash'
 
-        crashes = [self.assets_path+'other/ld_crash.png', self.assets_path+'other/nox_crash.png']
-        for img in crashes:
-            if self.is_on_screen(img, 0.5):
-                self.log('Game crashed')
-                return 'crash'
+        current_window = self.device_shell("dumpsys window windows | grep -E mCurrentFocus")
+        if 'com.android.launcher' in str(current_window):
+            self.log('Launcher deteced')
+            return 'crash'
 
 
     def login(self):
