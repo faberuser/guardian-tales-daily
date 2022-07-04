@@ -21,8 +21,8 @@ while True:
                 _nox_adb_dir = '"'+getcwd()+'\\.cache\\tmp\\'+item+'\\nox_adb.exe" '
                 break
         try:
-            terminal(_adb_dir + 'kill-server')
-            terminal(_nox_adb_dir + 'kill-server')
+            terminal(_adb_dir + 'kill-server', creationflags=0x08000000)
+            terminal(_nox_adb_dir + 'kill-server', creationflags=0x08000000)
         except FileNotFoundError:
             pass
         continue
@@ -60,7 +60,7 @@ except FileNotFoundError:
     with open('./config.json', 'a') as f:
         dump(config, f, indent=4)
 
-from PyQt5.QtWidgets import ( QApplication, QPushButton, QWidget, QLineEdit, QFileDialog,
+from PyQt5.QtWidgets import ( QFrame, QSizePolicy, QVBoxLayout, QApplication, QPushButton, QWidget, QLineEdit, QFileDialog,
     QAction, QComboBox, QLabel, QDesktopWidget, QInputDialog, QSystemTrayIcon, QMenu, QMessageBox, QCheckBox )
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import QThread, Qt, pyqtSlot
@@ -115,22 +115,17 @@ class MainWindow(QWidget):
 
         self.format_options = QLabel("Select an option:", self)
         self.format_options.setFont(QFont('Arial', 12))
-        self.format_options.move(12, 8)
 
         # 1) Run this script once
         self.run_once = QPushButton("Run this script once", self)
         self.run_once.setFont(QFont('Arial', 10))
         self.run_once.setToolTip("Run this script once")
-        self.run_once.resize(300, 40)
-        self.run_once.move(10, 35)
         self.run_once.clicked.connect(self.on_run_once_click)
 
         # 2) Run this script in background to check and run when new day
         self.run_background = QPushButton("Run this script in background", self)
         self.run_background.setFont(QFont('Arial', 10))
         self.run_background.setToolTip("Run this script in background") # TODO minimizing window
-        self.run_background.resize(300, 40)
-        self.run_background.move(10, 80)
         self.run_background.clicked.connect(self.on_run_background_click)
 
         # 3) Make this script auto start in background upon Windows startup
@@ -144,38 +139,61 @@ class MainWindow(QWidget):
             self.make_background = QPushButton("Unsign this script on Windows startup", self)
         self.make_background.setFont(QFont('Arial', 10))
         self.make_background.setToolTip("Sign or Unsign this script on Windows startup")
-        self.make_background.resize(300, 40)
-        self.make_background.move(10, 125)
         self.make_background.clicked.connect(self.on_make_background_click)
 
         # 4) Start config this script
         self.start_config = QPushButton("Start config this script", self)
         self.start_config.setFont(QFont('Arial', 10))
         self.start_config.setToolTip("Start configure this script")
-        self.start_config.resize(300, 40)
-        self.start_config.move(10, 170)
         self.start_config.clicked.connect(self.on_start_config_click)
 
         # 5) View current configuration
         self.view_config = QPushButton("View current configuration", self)
         self.view_config.setFont(QFont('Arial', 10))
         self.view_config.setToolTip("View current configuration")
-        self.view_config.resize(300, 40)
-        self.view_config.move(10, 215)
         self.view_config.clicked.connect(self.on_view_config_click)
 
         # 6) Exit Program
         self.exit_program = QPushButton("Minimize windows", self)
         self.exit_program.setFont(QFont('Arial', 10))
         self.exit_program.setToolTip("Safe quit program")
-        self.exit_program.resize(300, 40)
-        self.exit_program.move(10, 260)
         self.exit_program.clicked.connect(self.close)
 
         self.author = QLabel('Made by Faber', self)
         self.author.move(130, 307)
         quit = QAction("Quit", self)
         quit.triggered.connect(self.close)
+
+        vLayout = QVBoxLayout(self)
+        vLayout.addWidget(self.format_options)
+
+        vLayout.addWidget(self.run_once)
+        self.run_once.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(1, 10)
+
+        vLayout.addWidget(self.run_background)
+        self.run_background.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(2, 10)
+
+        vLayout.addWidget(self.make_background)
+        self.make_background.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(3, 10)
+
+        vLayout.addWidget(self.start_config)
+        self.start_config.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(4, 10)
+
+        vLayout.addWidget(self.view_config)
+        self.view_config.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(5, 10)
+
+        vLayout.addWidget(self.exit_program)
+        self.exit_program.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(6, 10)
+
+        vLayout.addWidget(self.author)
+        
+        self.setLayout(vLayout)
 
     def on_tray_icon_activated(self, event):
         if event == QSystemTrayIcon.DoubleClick:
@@ -244,13 +262,14 @@ class MainWindow(QWidget):
         self.start_config.setDisabled(False)
 
     def on_make_background_click(self):
-        call([r'generate-shortcut.bat'])
         startup = pth.expanduser('~\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup')
         had = False
         for file in listdir(startup):
             if file == 'Guardian Tales Daily.lnk':
                 had = True
+                break
         if had == False:
+            call([r'generate-shortcut.bat'], creationflags=0x08000000)
             parent = getcwd()
             copy(parent+r'\Guardian Tales Daily.lnk', startup)
             QMessageBox.information(self, f"Notice", "Script signed to <b>"+startup+"</b>.")
@@ -297,52 +316,39 @@ class ViewConfig(QWidget):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
 
         self.emulator_label = QLabel('Emulator Path (support LDPlayer and NoxPlayer):', self)
         self.emulator_label.setFont(QFont('Arial', 10))
-        self.emulator_label.move(10, 8)
 
         self.emulator_textbox = QLineEdit(config['emulator'], self)
         self.emulator_textbox.setDisabled(True)
-        self.emulator_textbox.move(11, 30)
-        self.emulator_textbox.resize(280, 30)
-
 
         self.devices_label = QLabel('Added Devices (left number row in LDMultiPlayer):', self)
         self.devices_label.setFont(QFont('Arial', 10))
-        self.devices_label.move(10, 70)
 
         current_devices = ''
         for device in config['devices']:
             current_devices+=str(device)+', '
         self.devices_textbox = QLineEdit(current_devices[:-2], self)
         self.devices_textbox.setDisabled(True)
-        self.devices_textbox.move(11, 90)
-        self.devices_textbox.resize(280, 30)
 
 
         self.max_devices_label = QLabel('Max device(s) running at 1 time:', self)
         self.max_devices_label.setFont(QFont('Arial', 10))
-        self.max_devices_label.move(10, 130)
 
         self.max_devices_textbox = QLineEdit(str(config['max_devices']), self)
         self.max_devices_textbox.setDisabled(True)
-        self.max_devices_textbox.move(11, 150)
-        self.max_devices_textbox.resize(280, 30)
 
 
         self.time_label = QLabel('Time to execute the script:', self)
         self.time_label.setFont(QFont('Arial', 10))
-        self.time_label.move(10, 190)
 
         self.time_textbox = QLineEdit(config['time'], self)
         self.time_textbox.setDisabled(True)
-        self.time_textbox.move(11, 210)
-        self.time_textbox.resize(280, 30)
 
         self.sweep_dungeon_label = QLabel('Sweep 30 coffee (3 entries) for a Dungeon', self)
         self.sweep_dungeon_label.setFont(QFont('Arial', 10))
-        self.sweep_dungeon_label.move(10, 250)
 
         self.sweep_dungeon_selector = QComboBox(self)
         dungeons = ['Gold', 'Exp', 'Item', 'Earth - Basic', 'Fire - Light', 'Water - Dark', 'Random 3 resource Dungeon']
@@ -350,26 +356,19 @@ class ViewConfig(QWidget):
         self.sweep_dungeon_selector.setCurrentIndex(dungeons.index(config['sweep_dungeon']))
         self.sweep_dungeon_selector.setFont(QFont('Arial', 10))
         self.sweep_dungeon_selector.setDisabled(True)
-        self.sweep_dungeon_selector.resize(240, 30)
-        self.sweep_dungeon_selector.move(10, 270)
 
         self.bonus_cutoff_label = QLabel('Bonus cutoff for image detection:', self)
         self.bonus_cutoff_label.setFont(QFont('Arial', 10))
-        self.bonus_cutoff_label.move(10, 310)
 
         self.bonus_cutoff_textbox = QLineEdit(str(config['bonus_cutoff']), self)
         self.bonus_cutoff_textbox.setDisabled(True)
-        self.bonus_cutoff_textbox.move(11, 330)
-        self.bonus_cutoff_textbox.resize(280, 30)
 
         self.execute_on_startup = QCheckBox('Run once on startup', self)
         self.execute_on_startup.setFont(QFont('Arial', 9))
-        self.execute_on_startup.move(4, 370)
         self.execute_on_startup.setDisabled(True)
 
         self.execute_background_on_startup = QCheckBox('Run in background on startup', self)
         self.execute_background_on_startup.setFont(QFont('Arial', 9))
-        self.execute_background_on_startup.move(136, 370)
         self.execute_background_on_startup.setDisabled(True)
 
         if config['startup'] == 'once':
@@ -379,9 +378,48 @@ class ViewConfig(QWidget):
 
         self.cancel_button = QPushButton('Close', self)
         self.cancel_button.setFont(QFont('Arial', 10))
-        self.cancel_button.resize(60, 32)
-        self.cancel_button.move(120, 395)
         self.cancel_button.clicked.connect(self.close)
+
+        vLayout = QVBoxLayout(self)
+
+        vLayout.addWidget(self.emulator_label)
+        vLayout.addWidget(self.emulator_textbox)
+        self.emulator_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(1, 10)
+
+        vLayout.addWidget(self.devices_label)
+        vLayout.addWidget(self.devices_textbox)
+        self.devices_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(3, 10)
+
+        vLayout.addWidget(self.max_devices_label)
+        vLayout.addWidget(self.max_devices_textbox)
+        self.max_devices_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(5, 10)
+
+        vLayout.addWidget(self.time_label)
+        vLayout.addWidget(self.time_textbox)
+        self.time_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(7, 10)
+
+        vLayout.addWidget(self.sweep_dungeon_label)
+        vLayout.addWidget(self.sweep_dungeon_selector)
+        self.sweep_dungeon_selector.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(9, 10)
+
+        vLayout.addWidget(self.bonus_cutoff_label)
+        vLayout.addWidget(self.bonus_cutoff_textbox)
+        self.bonus_cutoff_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(11, 10)
+
+        vLayout.addWidget(self.execute_on_startup)
+        vLayout.addWidget(self.execute_background_on_startup)
+
+        vLayout.addWidget(self.cancel_button)
+        self.cancel_button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.setStretch(14, 10)
+
+        self.setLayout(vLayout)
 
         quit = QAction("Quit", self)
         quit.triggered.connect(self.close)
@@ -413,27 +451,21 @@ class Configer(QWidget):
         centerPoint = QDesktopWidget().availableGeometry().center()
         qtRectangle.moveCenter(centerPoint)
         self.move(qtRectangle.topLeft())
-
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowMaximizeButtonHint)
 
         self.emulator_label = QLabel('Emulator Path (Support LDPlayer and NoxPlayer):', self)
         self.emulator_label.setFont(QFont('Arial', 10))
-        self.emulator_label.move(10, 8)
 
         self.emulator_textbox = QLineEdit(config['emulator'], self)
         self.emulator_textbox.setDisabled(True)
-        self.emulator_textbox.move(11, 30)
-        self.emulator_textbox.resize(240, 30)
 
         self.emulator_browse = QPushButton("Browse", self)
         self.emulator_browse.setFont(QFont('Arial', 10))
-        self.emulator_browse.resize(57, 32)
-        self.emulator_browse.move(257, 30)
         self.emulator_browse.clicked.connect(self.on_emulator_browse_click)
 
 
         self.devices_label = QLabel('Add Devices (left number row in LDMultiPlayer):', self)
         self.devices_label.setFont(QFont('Arial', 10))
-        self.devices_label.move(10, 70)
 
         current_devices = ''
         if config['devices'] != []:
@@ -441,97 +473,69 @@ class Configer(QWidget):
                 current_devices+=str(device)+', '
         self.devices_textbox = QLineEdit(current_devices[:-2], self)
         self.devices_textbox.setDisabled(True)
-        self.devices_textbox.move(11, 90)
-        self.devices_textbox.resize(280, 30)
 
         self.devices_add = QPushButton('Add', self)
         self.devices_add.setFont(QFont('Arial', 10))
-        self.devices_add.resize(57, 32)
-        self.devices_add.move(100, 125)
         self.devices_add.clicked.connect(self.add_device_number)
 
         self.devices_remove = QPushButton('Remove', self)
         self.devices_remove.setFont(QFont('Arial', 10))
-        self.devices_remove.resize(57, 32)
-        self.devices_remove.move(160, 125)
         self.devices_remove.clicked.connect(self.remove_device_number)
 
 
         self.max_devices_label = QLabel('Max device(s) running at 1 time:', self)
         self.max_devices_label.setFont(QFont('Arial', 10))
-        self.max_devices_label.move(10, 170)
 
         self.max_devices_textbox = QLineEdit(str(config['max_devices']), self)
         self.max_devices_textbox.setDisabled(True)
-        self.max_devices_textbox.move(11, 190)
-        self.max_devices_textbox.resize(240, 30)
 
         self.max_devices_edit = QPushButton('Edit', self)
         self.max_devices_edit.setFont(QFont('Arial', 10))
-        self.max_devices_edit.resize(57, 32)
-        self.max_devices_edit.move(257, 190)
         self.max_devices_edit.clicked.connect(self.on_max_devices_edit)
 
 
         self.time_label = QLabel('Time to execute the script:', self)
         self.time_label.setFont(QFont('Arial', 10))
-        self.time_label.move(10, 230)
 
         self.time_textbox = QLineEdit(config['time'], self)
         self.time_textbox.setDisabled(True)
-        self.time_textbox.move(11, 250)
-        self.time_textbox.resize(240, 30)
 
         self.time_hour_edit = QPushButton('Edit Hour', self)
         self.time_hour_edit.setFont(QFont('Arial', 10))
-        self.time_hour_edit.resize(80, 32)
-        self.time_hour_edit.move(90, 285)
         self.time_hour_edit.clicked.connect(self.on_hour_edit)
 
         self.time_minute_edit = QPushButton('Edit Minute', self)
         self.time_minute_edit.setFont(QFont('Arial', 10))
-        self.time_minute_edit.resize(80, 32)
-        self.time_minute_edit.move(170, 285)
         self.time_minute_edit.clicked.connect(self.on_minute_edit)
 
 
         self.sweep_dungeon_label = QLabel('Sweep 30 coffee (3 entries) for a Dungeon', self)
         self.sweep_dungeon_label.setFont(QFont('Arial', 10))
-        self.sweep_dungeon_label.move(10, 320)
 
         self.sweep_dungeon_selector = QComboBox(self)
         dungeons = ['Gold', 'Exp', 'Item', 'Earth - Basic', 'Fire - Light', 'Water - Dark', 'Random 3 resource Dungeon']
         self.sweep_dungeon_selector.addItems(dungeons)
         self.sweep_dungeon_selector.setCurrentIndex(dungeons.index(config['sweep_dungeon']))
         self.sweep_dungeon_selector.setFont(QFont('Arial', 10))
-        self.sweep_dungeon_selector.resize(240, 30)
-        self.sweep_dungeon_selector.move(10, 340)
 
         
         self.bonus_cutoff_label = QLabel('Bonus cutoff for image detection:', self)
         self.bonus_cutoff_label.setFont(QFont('Arial', 10))
-        self.bonus_cutoff_label.move(10, 380)
 
         self.bonus_cutoff_textbox = QLineEdit(str(config['bonus_cutoff']), self)
         self.bonus_cutoff_textbox.setDisabled(True)
-        self.bonus_cutoff_textbox.move(11, 400)
-        self.bonus_cutoff_textbox.resize(240, 30)
 
         self.bonus_cutoff_edit = QPushButton('Edit', self)
         self.bonus_cutoff_edit.setFont(QFont('Arial', 10))
-        self.bonus_cutoff_edit.resize(57, 32)
-        self.bonus_cutoff_edit.move(257, 400)
         self.bonus_cutoff_edit.clicked.connect(self.on_bonus_cutoff_edit)
 
 
         self.execute_on_startup = QCheckBox('Run once on startup', self)
         self.execute_on_startup.setFont(QFont('Arial', 9))
-        self.execute_on_startup.move(4, 435)
         self.execute_on_startup.stateChanged.connect(self.onStateChange)
 
         self.execute_background_on_startup = QCheckBox('Run in background on startup', self)
         self.execute_background_on_startup.setFont(QFont('Arial', 9))
-        self.execute_background_on_startup.move(136, 435)
         self.execute_background_on_startup.stateChanged.connect(self.onStateChange)
 
         if config['startup'] == 'once':
@@ -544,15 +548,69 @@ class Configer(QWidget):
 
         self.save_button = QPushButton('Save', self)
         self.save_button.setFont(QFont('Arial', 10))
-        self.save_button.resize(57, 32)
-        self.save_button.move(100, 460)
         self.save_button.clicked.connect(self.on_save)
 
         self.cancel_button = QPushButton('Cancel', self)
         self.cancel_button.setFont(QFont('Arial', 10))
-        self.cancel_button.resize(57, 32)
-        self.cancel_button.move(160, 460)
         self.cancel_button.clicked.connect(self.close)
+
+        vLayout = QVBoxLayout(self)
+        separador = QFrame()
+
+        vLayout.addWidget(self.emulator_label)
+        vLayout.addWidget(self.emulator_textbox)
+        self.emulator_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.emulator_browse)
+        self.emulator_browse.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addSpacing(10)
+
+        vLayout.addWidget(self.devices_label)
+        vLayout.addWidget(self.devices_textbox)
+        self.devices_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.devices_add)
+        self.devices_add.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.devices_remove)
+        self.devices_remove.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addSpacing(10)
+
+        vLayout.addWidget(self.max_devices_label)
+        vLayout.addWidget(self.max_devices_textbox)
+        self.max_devices_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.max_devices_edit)
+        self.max_devices_edit.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addSpacing(10)
+
+        vLayout.addWidget(self.time_label)
+        vLayout.addWidget(self.time_textbox)
+        self.time_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.time_hour_edit)
+        self.time_hour_edit.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.time_minute_edit)
+        self.time_minute_edit.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addSpacing(10)
+
+        vLayout.addWidget(self.sweep_dungeon_label)
+        vLayout.addWidget(self.sweep_dungeon_selector)
+        self.sweep_dungeon_selector.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addSpacing(10)
+
+        vLayout.addWidget(self.bonus_cutoff_label)
+        vLayout.addWidget(self.bonus_cutoff_textbox)
+        self.bonus_cutoff_textbox.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.bonus_cutoff_edit)
+        self.bonus_cutoff_edit.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addSpacing(10)
+
+        vLayout.addWidget(self.execute_on_startup)
+        vLayout.addWidget(self.execute_background_on_startup)
+        vLayout.addSpacing(10)
+
+        vLayout.addWidget(self.save_button)
+        self.save_button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+        vLayout.addWidget(self.cancel_button)
+        self.cancel_button.setSizePolicy(QSizePolicy.Minimum, QSizePolicy.Minimum)
+
+        self.setLayout(vLayout)
 
         quit = QAction("Quit", self)
         quit.triggered.connect(self.close)

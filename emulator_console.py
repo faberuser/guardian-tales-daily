@@ -21,7 +21,7 @@ with open('./config.json') as j:
 
 def ld_console(command):
     ldconsole_path = config['emulator']
-    return terminal(ldconsole_path + ' ' + command, capture_output=True).stdout.decode('utf-8')
+    return terminal(ldconsole_path + ' ' + command, capture_output=True, creationflags=0x08000000).stdout.decode('utf-8')
 
 def ld_launch(index):
     result = ld_console('launch --index ' + str(index))
@@ -36,9 +36,9 @@ def nox_console(command):
     devices = config['devices']
     if command == 'quitall':
         for device in devices:
-            terminal(noxconsole_path + ' -clone:Nox_' + str(device) + ' -quit')
+            terminal(noxconsole_path + ' -clone:Nox_' + str(device) + ' -quit', creationflags=0x08000000)
         return
-    return terminal(noxconsole_path + ' ' + command, capture_output=True).stdout.decode('utf-8')
+    return terminal(noxconsole_path + ' ' + command, capture_output=True, creationflags=0x08000000).stdout.decode('utf-8')
 
 def nox_launch(index):
     thread = Thread(target=nox_console, args=('-clone:Nox_' + str(index),)) # Launching a Nox instance freeze a whole process so we need threading to split the process out

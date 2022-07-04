@@ -82,7 +82,7 @@ class Executor:
         print(_text)
 
     def device_shell(self, command):
-        return terminal(adb_dir + '-s ' + self.device + ' shell ' + command, capture_output=True).stdout.decode('utf-8')
+        return terminal(adb_dir + '-s ' + self.device + ' shell ' + command, capture_output=True, creationflags=0x08000000).stdout.decode('utf-8')
 
     def update_cache(self):
         sleep(0.25)
@@ -91,13 +91,13 @@ class Executor:
         if '127.0.0.1' in self.device:
             _device = 'nox_' + self.device.replace('127.0.0.1:', '')
         if self.cache is None:
-            terminal(adb_dir + '-s ' + self.device + ' pull /sdcard/screencap.png ./.cache/screencap-'+_device+'-cache-1.png') # pull that screenshot back to host at /.cache
+            terminal(adb_dir + '-s ' + self.device + ' pull /sdcard/screencap.png ./.cache/screencap-'+_device+'-cache-1.png', creationflags=0x08000000) # pull that screenshot back to host at /.cache
             self.cache = './.cache/screencap-'+_device+'-cache-1.png'
             if self.res == None:
                 width, height = Image.open(self.cache).size
                 self.res = (0, 0, width, height)
             return
-        terminal(adb_dir + '-s ' + self.device + ' pull /sdcard/screencap.png ./.cache/screencap-'+_device+'-cache-2.png') # cache second image to comparing if game freezing
+        terminal(adb_dir + '-s ' + self.device + ' pull /sdcard/screencap.png ./.cache/screencap-'+_device+'-cache-2.png', creationflags=0x08000000) # cache second image to comparing if game freezing
         if locateOnScreen('./.cache/screencap-'+_device+'-cache-2.png', self.cache, minSearchTime=0, confidence=0.4-float(f'0.{self.bonus_cutoff}')):
             self.freeze_count += 1
         shutil.copy('./.cache/screencap-'+_device+'-cache-2.png', './.cache/screencap-'+_device+'-cache-1.png')

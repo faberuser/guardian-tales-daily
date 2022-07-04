@@ -24,7 +24,7 @@ def log(text):
 
 def load_devices():
     log('Loading emulator(s)...\n')
-    terminal(adb_dir + 'kill-server')
+    terminal(adb_dir + 'kill-server', creationflags=0x08000000)
     loads = 0
     while True:
         try:
@@ -32,7 +32,7 @@ def load_devices():
             if loads == 11:
                 break
 
-            result = terminal(adb_dir + 'devices', capture_output=True).stdout.decode('utf-8')
+            result = terminal(adb_dir + 'devices', capture_output=True, creationflags=0x08000000).stdout.decode('utf-8')
             state = None
             devices = []
             for line in result.split('\n'):
