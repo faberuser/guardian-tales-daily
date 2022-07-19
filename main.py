@@ -1,4 +1,4 @@
-import sys, logging, traceback
+import sys, logging, traceback, ctypes
 
 from datetime import datetime
 from time import sleep
@@ -7,29 +7,26 @@ from json import load, dump
 from os import path as pth, mkdir, chdir, getcwd, listdir, remove
 from subprocess import call, run as terminal
 
+from PyQt5.QtWidgets import ( QFrame, QSizePolicy, QVBoxLayout, QApplication, QPushButton, QWidget, QLineEdit, QFileDialog,
+    QAction, QComboBox, QLabel, QDesktopWidget, QInputDialog, QSystemTrayIcon, QMenu, QMessageBox, QCheckBox )
+from PyQt5.QtGui import QFont, QIcon
+from PyQt5.QtCore import QThread, Qt, pyqtSlot
+
 chdir(getcwd())
-while True:
-    try:
-        for item in listdir('./.cache/tmp'):
-            if item not in sys._MEIPASS:
-                rmtree('./.cache/tmp/'+item)
-        break
-    except PermissionError:
-        for item in listdir('./.cache/tmp'):
-            if "_MEI" in item and item not in sys._MEIPASS:
-                _adb_dir = '"'+getcwd()+'\\.cache\\tmp\\'+item+'\\adb.exe" '
-                _nox_adb_dir = '"'+getcwd()+'\\.cache\\tmp\\'+item+'\\nox_adb.exe" '
-                break
+try:
+    terminal('"' + sys._MEIPASS + '\\adb.exe" ' + 'kill-server', creationflags=0x08000000)
+    terminal('"' + sys._MEIPASS + '\\nox_adb.exe" ' + 'kill-server', creationflags=0x08000000)
+    while True:
         try:
-            terminal(_adb_dir + 'kill-server', creationflags=0x08000000)
-            terminal(_nox_adb_dir + 'kill-server', creationflags=0x08000000)
-        except FileNotFoundError:
-            pass
-        continue
-    except AttributeError:
-        break
-    except OSError:
-        continue
+            for item in listdir('./.cache/tmp'):
+                if item not in sys._MEIPASS:
+                    rmtree('./.cache/tmp/'+item)
+            break
+        except PermissionError or OSError or AttributeError:
+            ctypes.windll.user32.MessageBoxW(0, "Other instance of this script is running or crashed, please Quit with icon on Taskbar or open Task Manager and End task all of them.", "Warning", 0)
+            sys.exit()
+except AttributeError:
+    pass
 
 if pth.exists('./.cache') == False:
     mkdir('./.cache')
@@ -62,11 +59,6 @@ except FileNotFoundError:
     }
     with open('./config.json', 'a') as f:
         dump(config, f, indent=4)
-
-from PyQt5.QtWidgets import ( QFrame, QSizePolicy, QVBoxLayout, QApplication, QPushButton, QWidget, QLineEdit, QFileDialog,
-    QAction, QComboBox, QLabel, QDesktopWidget, QInputDialog, QSystemTrayIcon, QMenu, QMessageBox, QCheckBox )
-from PyQt5.QtGui import QFont, QIcon
-from PyQt5.QtCore import QThread, Qt, pyqtSlot
 
 class MainWindow(QWidget):
     def __init__(self):
