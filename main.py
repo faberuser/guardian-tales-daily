@@ -14,7 +14,7 @@ while True:
             if item not in sys._MEIPASS:
                 rmtree('./.cache/tmp/'+item)
         break
-    except PermissionError:
+    except PermissionError or OSError:
         for item in listdir('./.cache/tmp'):
             if "_MEI" in item and item not in sys._MEIPASS:
                 _adb_dir = '"'+getcwd()+'\\.cache\\tmp\\'+item+'\\adb.exe" '
@@ -324,7 +324,7 @@ class ViewConfig(QWidget):
         self.emulator_textbox = QLineEdit(config['emulator'], self)
         self.emulator_textbox.setDisabled(True)
 
-        self.devices_label = QLabel('Added Devices (left number row in LDMultiPlayer):', self)
+        self.devices_label = QLabel('Added Devices (left number row in MultiPlayer):', self)
         self.devices_label.setFont(QFont('Arial', 10))
 
         current_devices = ''
