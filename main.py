@@ -14,7 +14,7 @@ while True:
             if item not in sys._MEIPASS:
                 rmtree('./.cache/tmp/'+item)
         break
-    except PermissionError or OSError:
+    except PermissionError:
         for item in listdir('./.cache/tmp'):
             if "_MEI" in item and item not in sys._MEIPASS:
                 _adb_dir = '"'+getcwd()+'\\.cache\\tmp\\'+item+'\\adb.exe" '
@@ -28,6 +28,9 @@ while True:
         continue
     except AttributeError:
         break
+    except OSError:
+        continue
+
 if pth.exists('./.cache') == False:
     mkdir('./.cache')
 if pth.exists('./.cache/log.log') == False:
