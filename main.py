@@ -772,10 +772,16 @@ class OnRunBackground(QThread):
         self.executing = False
 
     def run(self):
+        with open('./config.json') as f:
+            config = load(f)
+
         import executor
         while self.alive:
             now = datetime.now().strftime("%H:%M")
             print('Checking at '+str(now))
+            print('now: ' + str(now))
+            print('config: ' + config['time'])
+            print(str(now) == config['time'])
             if str(now) != config['time']:
                 sleep(60)
                 continue

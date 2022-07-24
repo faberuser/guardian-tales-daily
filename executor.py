@@ -89,6 +89,7 @@ def executor(devices, indexes):
 def indexer():
     with open('./config.json') as j:
         config = load(j)
+
     configured_devices = config['devices']
     set_max_devices = config['max_devices']
 
