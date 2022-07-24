@@ -126,7 +126,7 @@ class MainWindow(QWidget):
         # 3) Make this script auto start in background upon Windows startup
         had = False
         for file in listdir(pth.expanduser('~\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup')):
-            if file == 'Guardian Tales Daily.lnk':
+            if file == 'GuardianTalesDaily.lnk':
                 had = True
         if had == False:
             self.make_background = QPushButton("Sign this script on Windows startup", self)
@@ -260,17 +260,17 @@ class MainWindow(QWidget):
         startup = pth.expanduser('~\\AppData\\Roaming\\Microsoft\\Windows\\Start Menu\\Programs\\Startup')
         had = False
         for file in listdir(startup):
-            if file == 'Guardian Tales Daily.lnk':
+            if file == 'GuardianTalesDaily.lnk':
                 had = True
                 break
         if had == False:
             call([r'generate-shortcut.bat'], creationflags=0x08000000)
             parent = getcwd()
-            copy(parent+r'\Guardian Tales Daily.lnk', startup)
+            copy(parent+r'\GuardianTalesDaily.lnk', startup)
             QMessageBox.information(self, f"Notice", "Script signed to <b>"+startup+"</b>.")
             self.make_background.setText('Unsign this script on Windows startup')
         else:
-            remove(startup+'\\Guardian Tales Daily.lnk')
+            remove(startup+'\\GuardianTalesDaily.lnk')
             QMessageBox.information(self, f"Notice", "Script unsigned to <b>"+startup+"</b>.")
             self.make_background.setText('Sign this script on Windows startup')
 
