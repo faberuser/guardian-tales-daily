@@ -459,7 +459,7 @@ class Configer(QWidget):
         self.emulator_browse.clicked.connect(self.on_emulator_browse_click)
 
 
-        self.devices_label = QLabel('Add Devices (left number row in LDMultiPlayer):', self)
+        self.devices_label = QLabel('Add Devices (left number row in MultiPlayer):', self)
         self.devices_label.setFont(QFont('Arial', 10))
 
         current_devices = ''
