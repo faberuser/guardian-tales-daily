@@ -5,7 +5,7 @@
 - Handles all dailies except Enhance equipment
 
 ## Installations
-* 3.7.x < Python < 3.9.x
+* Python 3.9.x
 * Use Virtual Environment:
     * Create virtual environment `virtualenv .env`
     * Activate:
