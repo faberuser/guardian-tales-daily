@@ -3,5 +3,6 @@ __pycache__
 .env
 build
 dist
+Guardian Tales Daily.lnk
 config.json
 *.spec

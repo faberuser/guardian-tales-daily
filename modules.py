@@ -38,7 +38,6 @@ def _crop(image, box):
 def _remove(image, box):
     # Return image with removed given box
     imArray = asarray(Image.open(image).convert("RGBA"))
-d
     rec = [box[0], box[1], box[0] + box[2], box[1] + box[3]]
     maskIm = Image.new("L", (imArray.shape[1], imArray.shape[0]), 0)
     ImageDraw.Draw(maskIm).rectangle(rec, outline=1, fill=1)
