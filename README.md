@@ -19,7 +19,7 @@
 #### Can only work with these settings:
 - Windows 10 or higher
 - Game language `ENGLISH`
-- Multiple `LDPlayer` or `NoxPlayer` Emulator with tablet resolution (`960x540`, `1280x720`, `1600x900`, `1920x1080`)
+- Multiple `LDPlayer` (version lower than 9) or `NoxPlayer` Emulator with tablet resolution (`960x540`, `1280x720`, `1600x900`, `1920x1080`)
 
 #### Emulator setup:
 - `3 cores CPU` and `4GB RAM` or above is recommended
