@@ -1,6 +1,6 @@
 Pillow
-opencv-python==4.5.3.56
-numpy==1.21.0
+opencv-python
+numpy
 requests
 pyqt5
 pyinstaller

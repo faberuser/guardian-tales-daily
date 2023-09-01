@@ -1,4 +1,6 @@
-import logging, shutil, sys
+import logging
+import shutil
+import sys
 from json import load
 from time import sleep
 from random import random
@@ -92,7 +94,8 @@ class Executor:
 
     def update_cache(self):
         sleep(0.25)
-        self.device_shell("screencap -p /sdcard/screencap.png")  # screencap on emulator
+        # screencap on emulator
+        self.device_shell("screencap -p /sdcard/screencap.png")
         _device = self.device
         if "127.0.0.1" in self.device:
             _device = "nox_" + self.device.replace("127.0.0.1:", "")
@@ -151,7 +154,8 @@ class Executor:
         if box != None:
             center = self.get_center(box)
             if hold is None:
-                self.device_shell("input tap " + str(center[0]) + " " + str(center[1]))
+                self.device_shell(
+                    "input tap " + str(center[0]) + " " + str(center[1]))
             else:
                 self.device_shell(
                     "input touchscreen swipe "
@@ -412,12 +416,14 @@ class Executor:
             if self.is_on_screen(
                 self.assets_path + "login/attendance_check_confirm.png", 0.7
             ):
-                self.tap(self.assets_path + "login/attendance_check_confirm.png", 0.7)
+                self.tap(self.assets_path +
+                         "login/attendance_check_confirm.png", 0.7)
 
             elif self.is_on_screen(
                 self.assets_path + "login/attendance_check_2.png", 0.7
             ):
-                self.tap(self.assets_path + "login/attendance_check_2.png", 0.7)
+                self.tap(self.assets_path +
+                         "login/attendance_check_2.png", 0.7)
 
             mission_buttons = [
                 self.assets_path + "login/mission_1.png",
@@ -453,7 +459,9 @@ class Executor:
                         elif self.is_on_screen(
                             self.assets_path + "clear_shop/shop.png", 0.7
                         ):
-                            self.tap(self.assets_path + "clear_shop/shop.png", 0.7)
+                            self.tap(self.assets_path +
+                                     "clear_shop/shop.png", 0.7)
+                            break
 
                         elif self.is_on_screen(
                             self.assets_path + "clear_shop/error.png"
@@ -488,7 +496,8 @@ class Executor:
                         if resource == False and self.is_on_screen(
                             self.assets_path + "clear_shop/resource.png", 0.7
                         ):
-                            self.tap(self.assets_path + "clear_shop/resource.png", 0.7)
+                            self.tap(self.assets_path +
+                                     "clear_shop/resource.png", 0.7)
                             while True:
                                 if resource == True or resource_count >= 5:
                                     break
@@ -531,7 +540,8 @@ class Executor:
                         if equipment == False and self.is_on_screen(
                             self.assets_path + "clear_shop/equipment.png", 0.7
                         ):
-                            self.tap(self.assets_path + "clear_shop/equipment.png", 0.7)
+                            self.tap(self.assets_path +
+                                     "clear_shop/equipment.png", 0.7)
                             while True:
                                 if equipment == True or equipment_count >= 5:
                                     break
@@ -541,7 +551,8 @@ class Executor:
                                 if self.is_on_screen(
                                     self.assets_path + "clear_shop/hammer.png"
                                 ):
-                                    self.tap(self.assets_path + "clear_shop/hammer.png")
+                                    self.tap(self.assets_path +
+                                             "clear_shop/hammer.png")
                                 else:
                                     equipment_count += 1
 
@@ -569,7 +580,8 @@ class Executor:
                         if self.is_on_screen(
                             self.assets_path + "clear_shop/back.png", 0.7
                         ):
-                            self.tap(self.assets_path + "clear_shop/back.png", 0.7)
+                            self.tap(self.assets_path +
+                                     "clear_shop/back.png", 0.7)
 
                         mission_buttons = [
                             self.assets_path + "login/mission_1.png",
@@ -607,7 +619,8 @@ class Executor:
                     if self.is_on_screen(
                         self.assets_path + "guild_attendance/notice_enter.png"
                     ):
-                        self.tap(self.assets_path + "guild_attendance/confirm.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "guild_attendance/confirm.png", 0.7)
                         receive_count = 0
                         up = True
                         while True:
@@ -767,7 +780,8 @@ class Executor:
             if self.is_on_screen(
                 self.assets_path + "guardian_points/base_camp.png", 0.7
             ):
-                self.tap(self.assets_path + "guardian_points/base_camp.png", 0.7)
+                self.tap(self.assets_path +
+                         "guardian_points/base_camp.png", 0.7)
                 down = False
             else:
                 if down == True:
@@ -792,12 +806,14 @@ class Executor:
                     elif self.is_on_screen(
                         self.assets_path + "guardian_points/confirm.png", 0.7
                     ):
-                        self.tap(self.assets_path + "guardian_points/confirm.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "guardian_points/confirm.png", 0.7)
 
                     elif self.is_on_screen(
                         self.assets_path + "guardian_points/x.png", 0.7
                     ):
-                        self.tap(self.assets_path + "guardian_points/x.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "guardian_points/x.png", 0.7)
                         self._guardian_points = True
                         return
 
@@ -847,7 +863,8 @@ class Executor:
             elif self.is_on_screen(
                 self.assets_path + "colosseum/attacked_confirm.png", 0.7
             ):
-                self.tap(self.assets_path + "colosseum/attacked_confirm.png", 0.7)
+                self.tap(self.assets_path +
+                         "colosseum/attacked_confirm.png", 0.7)
 
             elif self.is_on_screen(
                 self.assets_path + "colosseum/fight_1.png", 0.7
@@ -861,7 +878,8 @@ class Executor:
                     elif self.is_on_screen(
                         self.assets_path + "colosseum/battle_start.png", 0.7
                     ):
-                        self.tap(self.assets_path + "colosseum/battle_start.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "colosseum/battle_start.png", 0.7)
 
                     elif self.is_on_screen(
                         self.assets_path + "colosseum/game_result_confirm.png", 0.7
@@ -890,7 +908,8 @@ class Executor:
             elif self.is_on_screen(
                 self.assets_path + "awakening_dungeon/adventure.png", 0.7
             ):
-                self.tap(self.assets_path + "awakening_dungeon/adventure.png", 0.7)
+                self.tap(self.assets_path +
+                         "awakening_dungeon/adventure.png", 0.7)
 
             elif self.is_on_screen(
                 self.assets_path + "awakening_dungeon/rift.png", 0.7
@@ -900,12 +919,14 @@ class Executor:
             elif self.is_on_screen(
                 self.assets_path + "awakening_dungeon/awakening_dungeon.png"
             ):
-                self.tap(self.assets_path + "awakening_dungeon/awakening_dungeon.png")
+                self.tap(self.assets_path +
+                         "awakening_dungeon/awakening_dungeon.png")
 
             elif self.is_on_screen(
                 self.assets_path + "awakening_dungeon/auto_repeat.png", 0.7
             ):
-                self.tap(self.assets_path + "awakening_dungeon/auto_repeat.png", 0.7)
+                self.tap(self.assets_path +
+                         "awakening_dungeon/auto_repeat.png", 0.7)
                 while True:
                     if self.update_cache() == "crash":
                         return "crash"
@@ -913,9 +934,11 @@ class Executor:
                     elif self.is_on_screen(
                         self.assets_path + "awakening_dungeon/+.png", 0.7
                     ):
-                        self.tap(self.assets_path + "awakening_dungeon/+.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "awakening_dungeon/+.png", 0.7)
                         sleep(0.5)
-                        self.tap(self.assets_path + "awakening_dungeon/+.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "awakening_dungeon/+.png", 0.7)
                         sleep(0.5)
                         done = False
                         done_count = 0
@@ -1041,7 +1064,8 @@ class Executor:
                     elif self.is_on_screen(
                         self.assets_path + "awakening_dungeon/back.png", 0.7
                     ):
-                        self.tap(self.assets_path + "awakening_dungeon/back.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "awakening_dungeon/back.png", 0.7)
 
     def sweep_dungeon(self, config):
         # Sweep 30 coffee for a configured dungeon
@@ -1088,7 +1112,8 @@ class Executor:
                     elif self.is_on_screen(
                         self.assets_path + "sweep_dungeon/back.png", 0.7
                     ):
-                        self.tap(self.assets_path + "sweep_dungeon/back.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "sweep_dungeon/back.png", 0.7)
 
             if self.update_cache() == "crash":
                 return "crash"
@@ -1118,7 +1143,8 @@ class Executor:
             if self.is_on_screen(
                 self.assets_path + "sweep_dungeon/auto_repeat.png", 0.7
             ):
-                self.tap(self.assets_path + "sweep_dungeon/auto_repeat.png", 0.7)
+                self.tap(self.assets_path +
+                         "sweep_dungeon/auto_repeat.png", 0.7)
                 while True:
                     if self.update_cache() == "crash":
                         return "crash"
@@ -1242,7 +1268,8 @@ class Executor:
                     elif self.is_on_screen(
                         self.assets_path + "claim_mails/back.png", 0.7
                     ):
-                        self.tap(self.assets_path + "claim_mails/back.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "claim_mails/back.png", 0.7)
 
                     mission_buttons = [
                         self.assets_path + "login/mission_1.png",
@@ -1271,12 +1298,14 @@ class Executor:
                     if self.is_on_screen(
                         self.assets_path + "claim_mails/manage.png", 0.6
                     ):
-                        self.tap(self.assets_path + "claim_mails/manage.png", 0.6)
+                        self.tap(self.assets_path +
+                                 "claim_mails/manage.png", 0.6)
 
                     if self.is_on_screen(
                         self.assets_path + "claim_mails/receive_all.png", 0.9
                     ):
-                        self.tap(self.assets_path + "claim_mails/receive_all.png", 0.9)
+                        self.tap(self.assets_path +
+                                 "claim_mails/receive_all.png", 0.9)
                         receive_all = True
                     else:
                         receive_all_count += 1
@@ -1285,7 +1314,8 @@ class Executor:
                         if self.is_on_screen(
                             self.assets_path + "claim_mails/confirm.png", 0.6
                         ):
-                            self.tap(self.assets_path + "claim_mails/confirm.png", 0.6)
+                            self.tap(self.assets_path +
+                                     "claim_mails/confirm.png", 0.6)
                             break
 
                 while True:
@@ -1295,7 +1325,8 @@ class Executor:
                     elif self.is_on_screen(
                         self.assets_path + "claim_mails/back.png", 0.7
                     ):
-                        self.tap(self.assets_path + "claim_mails/back.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "claim_mails/back.png", 0.7)
 
                     mission_buttons = [
                         self.assets_path + "login/mission_1.png",
@@ -1333,7 +1364,8 @@ class Executor:
                     if self.is_on_screen(
                         self.assets_path + "claim_daily_rewards/back.png", 0.7
                     ):
-                        self.tap(self.assets_path + "claim_daily_rewards/back.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "claim_daily_rewards/back.png", 0.7)
 
             if self.update_cache() == "crash":
                 return "crash"
@@ -1351,14 +1383,16 @@ class Executor:
             if self.is_on_screen(
                 self.assets_path + "claim_daily_rewards/receive_all.png", 0.9
             ):
-                self.tap(self.assets_path + "claim_daily_rewards/receive_all.png", 0.9)
+                self.tap(self.assets_path +
+                         "claim_daily_rewards/receive_all.png", 0.9)
             else:
                 count += 1
 
             if self.is_on_screen(
                 self.assets_path + "claim_daily_rewards/confirm.png", 0.9
             ):
-                self.tap(self.assets_path + "claim_daily_rewards/confirm.png", 0.9)
+                self.tap(self.assets_path +
+                         "claim_daily_rewards/confirm.png", 0.9)
                 while True:
                     if self.update_cache() == "crash":
                         return "crash"
@@ -1377,7 +1411,8 @@ class Executor:
                     if self.is_on_screen(
                         self.assets_path + "claim_daily_rewards/back.png", 0.7
                     ):
-                        self.tap(self.assets_path + "claim_daily_rewards/back.png", 0.7)
+                        self.tap(self.assets_path +
+                                 "claim_daily_rewards/back.png", 0.7)
 
     def update_apk(self):
         self.log(

@@ -6,3 +6,5 @@ dist
 Guardian Tales Daily.lnk
 config.json
 *.spec
+.vscode
+*.lnk
